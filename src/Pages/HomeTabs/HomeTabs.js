@@ -1,19 +1,20 @@
 import React, { Component } from 'react';
 import { TabNavigator } from 'react-navigation';
 import { StatusBar, StyleSheet } from 'react-native';
-import { HomeScreen, BalanceScreen, UsersScreen, AddScreen } from '../Pages';
-import { Footer, FooterTab, Button, Icon, Text } from 'native-base';
+import { HomeScreen, BalanceScreen, UsersScreen, AddScreen} from '../Pages';
+import AddScreenStack from '../AddScreen/AddScreenStack';
+import { Footer, FooterTab, Button, Icon, Text, Root } from 'native-base';
 
 const HomeTabs = TabNavigator(
   {
     HomeScreen: { screen: HomeScreen },
     BalanceScreen: { screen: BalanceScreen },
     UsersScreen: { screen: UsersScreen },
-    AddScreen: { screen: AddScreen },
+    AddScreenStack: { screen: AddScreenStack },
   },
   {
     tabBarPosition: "bottom",
-    initialRouteName: 'BalanceScreen',
+    initialRouteName: 'AddScreenStack',
     swipeEnabled: true,
     tabBarComponent: props => {
       StatusBar.setBackgroundColor('#fff');
@@ -46,7 +47,7 @@ const HomeTabs = TabNavigator(
               }
             </Button>
             <Button
-              onPress={() => props.navigation.navigate("AddScreen")}>
+              onPress={() => props.navigation.navigate("AddScreenStack")}>
               {props.navigationState.index === 3 ? 
                 <Icon name="logo-usd" style={styles.active}/> 
               :
@@ -60,6 +61,16 @@ const HomeTabs = TabNavigator(
   }
 );
 
+export default class HomeTabsContainer extends React.Component {
+  render(){
+    return(
+      <Root>
+        <HomeTabs />
+      </Root>
+    );
+  }
+}
+
 const styles = StyleSheet.create({
   active: {
     color: '#0077FF',
@@ -69,4 +80,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export { HomeTabs };
+// export { HomeTabs };

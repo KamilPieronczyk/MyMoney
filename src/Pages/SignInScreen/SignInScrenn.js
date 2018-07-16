@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, StatusBar } from 'react-native';
 import { View, Image } from 'react-native';
 import { Text, Button, Icon } from 'native-base'; 
 import { Colors } from '../../styles/colors';
@@ -8,6 +8,8 @@ import { Colors } from '../../styles/colors';
 export class SignInScreen extends Component {
   constructor(props){
     super(props);
+    StatusBar.setBackgroundColor('#fff');
+    StatusBar.setBarStyle('dark-content');
     this.goHome = this.goHome.bind(this);
   }
 

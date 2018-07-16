@@ -1,5 +1,5 @@
 import { createStackNavigator } from 'react-navigation';
-import { HomeTabs } from './src/Pages/HomeTabs/HomeTabs';
+import HomeTabs from './src/Pages/HomeTabs/HomeTabs';
 import { SignInScreen } from './src/Pages/Pages';
 
 export default createStackNavigator(

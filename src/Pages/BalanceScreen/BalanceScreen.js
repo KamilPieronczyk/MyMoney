@@ -9,9 +9,9 @@ export class BalanceScreen extends Component {
     return (
       <View style={styles.Container}>
           <Header title="Bilans" />
-          <BalanceUserItem username="Mama" amount="-100,24" details={[-50,-20,-30,80,125,684]}/>
+          {/* <BalanceUserItem username="Mama" amount="-100,24" details={[-50,-20,-30,80,125,684]}/>
           <BalanceUserItem username="Mama" amount="-100,24" details={[-50,-20,684]}/>
-          <BalanceUserItem username="Mama" amount="-100,24" details={[-50,-20,-30,80,125,684,-25,-84]}/>
+          <BalanceUserItem username="Mama" amount="-100,24" details={[-50,-20,-30,80,125,684,-25,-84]}/> */}
           
       </View>
     )
