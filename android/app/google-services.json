@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "105934374982",
+    "firebase_url": "https://mymoney-340aa.firebaseio.com",
+    "project_id": "mymoney-340aa",
+    "storage_bucket": "mymoney-340aa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:105934374982:android:d14586b62a841ccc",
+        "android_client_info": {
+          "package_name": "com.mymoney"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "105934374982-8rgke37tnkqr8ee75p4v0r74vsmuemne.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mymoney",
+            "certificate_hash": "7be856192f678a456a61a3be0d35d8da57cc2507"
+          }
+        },
+        {
+          "client_id": "105934374982-mgf3rhkt0he5o5cs00i3svsenqvq7h3i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOEy0-wJDRKWkoAVwjkb_wEhELVqvv5ao"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "105934374982-mgf3rhkt0he5o5cs00i3svsenqvq7h3i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

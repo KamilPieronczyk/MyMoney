@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { TabNavigator } from 'react-navigation';
 import { StatusBar, StyleSheet } from 'react-native';
-import { HomeScreen, BalanceScreen, UsersScreen, AddScreen} from '../Pages';
+import { HomeScreen, BalanceScreen, UsersScreen, UsersStack} from '../Pages';
 import AddScreenStack from '../AddScreen/AddScreenStack';
 import { Footer, FooterTab, Button, Icon, Text, Root } from 'native-base';
 
@@ -9,12 +9,12 @@ const HomeTabs = TabNavigator(
   {
     HomeScreen: { screen: HomeScreen },
     BalanceScreen: { screen: BalanceScreen },
-    UsersScreen: { screen: UsersScreen },
+    UsersStack: { screen: UsersStack },
     AddScreenStack: { screen: AddScreenStack },
   },
   {
     tabBarPosition: "bottom",
-    initialRouteName: 'AddScreenStack',
+    initialRouteName: 'HomeScreen',
     swipeEnabled: true,
     tabBarComponent: props => {
       StatusBar.setBackgroundColor('#fff');
@@ -39,7 +39,7 @@ const HomeTabs = TabNavigator(
               }
             </Button>
             <Button
-              onPress={() => props.navigation.navigate("UsersScreen")}>
+              onPress={() => props.navigation.navigate("UsersStack")}>
               {props.navigationState.index === 2 ? 
                 <Icon name="md-people" style={styles.active}/> 
               :

@@ -1,9 +1,12 @@
 import { createStackNavigator } from 'react-navigation';
 import HomeTabs from './src/Pages/HomeTabs/HomeTabs';
-import { SignInScreen } from './src/Pages/Pages';
+import { SignInScreen, LandingScreen } from './src/Pages/Pages';
 
 export default createStackNavigator(
   {
+    LandingScreen: {
+      screen: LandingScreen,
+    },
     SignInScreen: {
       screen: SignInScreen,
     },
@@ -12,6 +15,7 @@ export default createStackNavigator(
     },
   },{
     headerMode: 'null',
-    initialRouteName: 'HomeScreen',
+    initialRouteName: 'LandingScreen',
   }
 );
+

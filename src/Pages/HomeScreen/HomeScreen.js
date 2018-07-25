@@ -3,11 +3,14 @@ import { ScrollView } from 'react-native';
 import { View, Text } from 'native-base'; 
 import { PaymentItem } from '../../Components/PaymentItem';
 import { StyleSheet } from 'react-native';
+import { Header } from './../../Components/Header';
 
 export class HomeScreen extends Component {  
   render() {
     return (
-      <ScrollView style={styles.Container} >          
+      <View style={{height: '100%'}}> 
+        <Header title="Płatności" />
+        <ScrollView style={styles.Container} >          
           
           <PaymentItem />
           <PaymentItem />
@@ -15,7 +18,8 @@ export class HomeScreen extends Component {
           <PaymentItem />
           <PaymentItem />
           
-      </ScrollView>
+        </ScrollView>
+      </View>      
     )
   }
 };

@@ -30,7 +30,15 @@ export class AddScreen extends Component {
 
   setAmount = (number) => {
     let string = this.state.amount;
+    if (string.indexOf(',') !== -1 && string.length-string.indexOf(',') > 2) return false;
     string += number;
+    this.setState({amount: string});
+  }
+
+  addComma = () => {
+    let string = this.state.amount;
+    if( string.indexOf(',') !== -1 || string.length == 0) return false;
+    string += ',';
     this.setState({amount: string});
   }
 
@@ -99,7 +107,7 @@ export class AddScreen extends Component {
             </View>
             <View style={styles.KeyboradRow}>
               <Button transparent style={styles.KeyboardButton}><Icon name="md-checkmark" style={styles.KeyboardButtonIcon} /></Button>
-              <Button transparent style={styles.KeyboardButton} onPress={()=>this.setAmount(',')}><Text style={styles.KeyboardButtonText}>,</Text></Button>
+              <Button transparent style={styles.KeyboardButton} onPress={()=>this.addComma()}><Text style={styles.KeyboardButtonText}>,</Text></Button>
               <Button transparent style={styles.KeyboardButton} onPress={this.backspace}><Icon name="md-backspace" style={styles.KeyboardButtonIcon} /></Button>
             </View>
           </View>

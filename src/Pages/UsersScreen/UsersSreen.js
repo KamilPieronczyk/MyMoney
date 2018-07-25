@@ -1,10 +1,21 @@
 import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
-import { View, Text, List, ListItem, Left, Right,Body, Icon, ActionSheet, Fab } from 'native-base'; 
+import { View, Text, List, ListItem, Right,Body, Icon, ActionSheet, Fab } from 'native-base'; 
 import { Header } from '../../Components/Header';
 import { Colors } from '../../styles/styles';
+import firebase from 'react-native-firebase';
 
 export class UsersScreen extends Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      accounts: [],
+    }
+    let currentUser = firebase.auth().currentUser;
+    this.db = firebase.firestore().collection('users').doc(currentUser.uid).collection('accounts');
+    this.AddUserOpen = this.AddUserOpen.bind(this);    
+    this.getUsers = this.getUsers.bind(this);
+  }
   ShowActionSheet(){
     let BUTTONS = [
       { text: "Wyzeruj saldo", icon: "ios-backspace", iconColor: Colors.red },
@@ -20,13 +31,47 @@ export class UsersScreen extends Component {
       buttonIndex => {},    
     );
   }
+
+  AddUserOpen(){
+    this.props.navigation.navigate('AddUserScreen');
+  }
+
+  componentWillMount(){
+    this.getUsers();
+  }
+  
+  getUsers(){
+    this.db.onSnapshot(doc => {
+      let accounts = [];
+      doc.forEach( account => {
+        accounts.push(account.data());
+      });
+      this.setState({accounts});
+    })
+  }
+
   render(){
     return (
       <View style={styles.Container}>
 
         <Header title="Konta" />
+
         
-        <List selected>
+        <List dataArray={this.state.accounts} renderRow={(account) =>
+          <ListItem onPress={this.ShowActionSheet}>
+            <Body>
+              <Text>{account.username}</Text>              
+              <Text note>{account.saldo} zł</Text>                            
+            </Body>
+            <Right>
+              <Icon name="ios-arrow-forward"/>
+            </Right>
+          </ListItem>
+          }>
+        </List>
+        
+        
+        {/* <List selected>
           <ListItem onPress={this.ShowActionSheet}>
             <Body>
               <Text>Mama</Text>              
@@ -54,12 +99,13 @@ export class UsersScreen extends Component {
               <Icon name="ios-arrow-forward"/>
             </Right>
           </ListItem>
-        </List>    
+        </List>     */}
 
         <Fab
           direction="up"
           style={{ backgroundColor: Colors.primary }}
-          position="bottomRight">
+          position="bottomRight"
+          onPress={this.AddUserOpen}>
           <Icon name="md-add" />
         </Fab>
       </View>
@@ -73,3 +119,5 @@ const styles = StyleSheet.create({
     height: '100%',
   },
 })
+
+

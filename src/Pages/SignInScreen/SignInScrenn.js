@@ -1,23 +1,59 @@
 import React, { Component } from 'react';
 import { StyleSheet, StatusBar } from 'react-native';
 import { View, Image } from 'react-native';
-import { Text, Button, Icon } from 'native-base'; 
+import { Text, Button, Spinner } from 'native-base'; 
 import { Colors } from '../../styles/colors';
+import { GoogleSignin, GoogleSigninButton } from 'react-native-google-signin';
+import firebase from 'react-native-firebase';
 //import { Colors } from './../../styles/styles';
 
 export class SignInScreen extends Component {
   constructor(props){
     super(props);
+    this.state = {
+      buttonClicked: false
+    }
     StatusBar.setBackgroundColor('#fff');
     StatusBar.setBarStyle('dark-content');
-    this.goHome = this.goHome.bind(this);
+    this.logWithGoogle = this.logWithGoogle.bind(this);
+    this.Anonymous = this.Anonymous.bind(this);
   }
 
-  goHome() {
-    this.props.navigation.navigate('HomeScreen');
+  async logWithGoogle(){
+    this.setState({buttonClicked: true});
+    try {
+      await GoogleSignin.configure();
+
+      const data = await GoogleSignin.signIn();
+
+      // create a new firebase credential with the token
+      const credential = firebase.auth.GoogleAuthProvider.credential(data.idToken, data.accessToken)
+      // login with credential
+      const currentUser = await firebase.auth().signInAndRetrieveDataWithCredential(credential);
+      firebase.auth().currentUser.reload();
+      this.setState({buttonClicked: false});
+    } catch (e) {
+      console.error(e);
+      this.setState({buttonClicked: false});
+    }    
+  }
+
+  Anonymous (){
+    this.setState({buttonClicked: true});
+    firebase.auth().signInAnonymously()
+    .then(()=>{
+      this.setState({buttonClicked: false});
+      firebase.auth().currentUser.reload();
+    });
   }
 
   render() {
+    let load;
+    if(this.state.buttonClicked){
+      load = <Spinner color={Colors.primary} style={{marginTop: 20}} />
+    } else {
+      load = null;
+    }
     return (
       <View style={styles.Container} >
 
@@ -28,13 +64,15 @@ export class SignInScreen extends Component {
 
         <View style={styles.ButtonsSection}>
           <View style={styles.ButtonsSize}>
-            <Button light block style={styles.Button} onPress={this.goHome}>              
-              <Icon name="logo-google" style={styles.logoG} />              
-              <Text style={styles.ButtonColor}>ZALOGUJ SIĘ Z GOOGLE</Text>
-            </Button>
-            <Button light block style={styles.Button} onPress={this.goHome}>
+            <GoogleSigninButton
+              style={{ width: 225, height: 48, marginBottom: 13 }}
+              size={GoogleSigninButton.Size.Wide}
+              color={GoogleSigninButton.Color.Light}
+              onPress={this.logWithGoogle}/>
+            <Button light block transparent style={styles.Button} onPress={this.Anonymous}>
               <Text style={styles.ButtonColor}>WEJDŹ BEZ LOGOWANIA</Text>
             </Button>
+            {load}
           </View>
         </View>   
 
