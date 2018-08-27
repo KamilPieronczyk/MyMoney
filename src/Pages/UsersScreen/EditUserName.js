@@ -6,17 +6,18 @@ import { Colors } from '../../styles/styles';
 import firebase from 'react-native-firebase';
 import { MySpinner }from '../../Components/Spinner';
 
-export class AddUserScreen extends Component {
+export class EditUserNameScreen extends Component {
   constructor(props){
     super(props);
     this.state = {
       username: '',
-      email: '',
+      usernamePrevious:  this.props.navigation.getParam('username'),
+      accountId:  this.props.navigation.getParam('accountId'),
       spinner: false,
     }
     this.db = firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).collection('accounts');
     this.back = this.back.bind(this);
-    this.createAccount = this.createAccount.bind(this);
+    this.editUserName = this.editUserName.bind(this);
   }
 
   back(){
@@ -33,7 +34,7 @@ export class AddUserScreen extends Component {
     )
   }
 
-  createAccount(){
+  editUserName(){
     if(this.state.username != ''){
       this.setState({spinner: true});
       this.db.where('username','==',this.state.username).get()
@@ -42,10 +43,8 @@ export class AddUserScreen extends Component {
           this.alertUsername();
           this.setState({spinner: false});
         } else {
-          this.db.doc().set({
+          this.db.doc(this.state.accountId).update({
             username: this.state.username,
-            email: this.state.email,
-            saldo: 0,
           })
           .then(()=>{
             this.setState({spinner: false});
@@ -61,20 +60,19 @@ export class AddUserScreen extends Component {
     return (
       <View style={styles.Container}>
 
-        <Header title="Utwótz konto" onBackPress={this.back} />
+        <Header title="Edytij nazwę konta" onBackPress={this.back} />
         
         <View style={styles.InputsContainer}>
-          <Item style={styles.InputTitle}>            
-            <Input placeholder="Nazwa konta" onChangeText={(username) => this.setState({username})} />
+          <Text style={styles.TextGmail}>Edytuj nazwę konta</Text>
+          <Item style={styles.InputTitle} >            
+            <Input onChangeText={(username) => this.setState({username})} defaultValue={this.state.usernamePrevious} />
           </Item>
-          <Text style={styles.TextGmail}>Podaj email (Google) tworzonego konta by użytkownik widział twoje operacje (opcjonalne)</Text>
-          <Item style={styles.InputGmail}>            
-            <Input placeholder="Email" onChangeText={(email) => this.setState({email})}/>
-          </Item>
+          
+
           <View style={styles.ButtonContainer}>
             
-            <Button transparent onPress={this.createAccount} >
-              <Text style={styles.ButtonCreate}>Utwótz konto</Text>
+            <Button transparent onPress={this.editUserName} >
+              <Text style={styles.ButtonCreate}>Edytuj konto</Text>
             </Button>
             
           </View>
@@ -95,16 +93,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   InputTitle: {
-    marginTop: 0,
+    marginTop: 5,
   },
   TextGmail: {
     marginTop: 30,
     fontSize: 14,
     fontFamily: 'Roboto',
     color: '#333',
-  },
-  InputGmail: {
-    marginTop: 5,
   },
   ButtonContainer: {
     marginTop: 20,

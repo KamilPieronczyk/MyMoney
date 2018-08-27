@@ -7,15 +7,23 @@ import { UsersScreen } from './UsersScreen/UsersSreen';
 import { AddScreenStack } from './AddScreen/AddScreenStack';
 import { LandingScreen } from './LandingScreen/LandingScreen';
 import { AddUserScreen } from './AddUserScreen/AddUserScreen';
+import { EditUserNameScreen } from './UsersScreen/EditUserName';
+import { DeleteUserScreen } from './UsersScreen/DeleteUserScreen';
 
 const UsersStack = createStackNavigator(
     {
         UsersScreen: {
-        screen: UsersScreen,
+            screen: UsersScreen,
         },
         AddUserScreen: {
-        screen: AddUserScreen,
+            screen: AddUserScreen,
         },
+        EditUserNameScreen: {
+            screen: EditUserNameScreen,
+        },
+        DeleteUserScreen: {
+            screen: DeleteUserScreen,
+        }
     },{
         headerMode: 'null',
         initialRouteName: 'UsersScreen',
