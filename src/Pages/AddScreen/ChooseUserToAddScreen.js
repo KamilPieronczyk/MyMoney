@@ -56,7 +56,7 @@ export class ChooseUserToAddScreen extends Component {
                 <Text>{account.username}</Text>                
               </Left>
               <Right>
-                <Radio selectedColor={Colors.primary} onPress={()=>this.setUser(account.id, account.username)} selected={this.state.id == account.id ? true : false}/>
+                <Radio selectedColor={Colors.primary} selected={(this.state.id == account.id)? true : false}/>
               </Right>
             </ListItem>
             }>

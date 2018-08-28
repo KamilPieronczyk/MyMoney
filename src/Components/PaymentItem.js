@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Alert, ToastAndroid, ProgressBarAndroid } from 'react-native';
 import { Colors } from '../styles/styles';
 
 import { View, Text, Button, Icon } from 'native-base';
+import firebase from 'react-native-firebase';
 
 export class PaymentItem extends Component {
 	constructor(props){
@@ -10,7 +11,15 @@ export class PaymentItem extends Component {
 		this.char = this.props.kind == 'creditor' ? '+' : '-';
 		this.state = {
 			paymentId: this.props.id,
+			accountId: this.props.accountId,
+			progressBar: false,
 		}
+		let currentUser = firebase.auth().currentUser;
+    this.payment = firebase.firestore().collection('users').doc(currentUser.uid).collection('payments').doc(this.state.paymentId);
+	
+		this.alert = this.alert.bind(this);
+		this.removePayment = this.removePayment.bind(this);
+		this.setCompleted = this.setCompleted.bind(this);
 	}
 
 	getDateString(date){
@@ -26,7 +35,7 @@ export class PaymentItem extends Component {
 			60,
 			1,
 		];
-		let names = ['year','month','week','day','hour','minute','secund'];
+		let names = ['year','month','week','day','hour','minute','second'];
 		let string, name;
 
 		for (let i = 0; i < values.length; i++) {
@@ -37,14 +46,63 @@ export class PaymentItem extends Component {
 				break;
 			}
 		}
-
 		return string;
 	}
+
+	alert(){
+		Alert.alert(
+			'Usuń!',
+			'Czy jesteś pewny, że chcesz usunąć tą płatność?',
+			[
+				{text: 'Cancel'},
+				{text: 'OK', onPress: () => this.removePayment()},
+			],
+			{ cancelable: true }
+		)
+	}
+
+	removePayment(){
+		this.setState({progressBar: true});
+		this.payment.delete()
+		.then(()=>{
+			ToastAndroid.showWithGravity(
+				'Płatność usunięta',
+				ToastAndroid.LONG,
+				ToastAndroid.BOTTOM,
+			);
+			this.setState({progressBar: false});
+		})
+		.catch(()=>{
+			this.setState({progressBar: false});
+		})
+	}
+
+	setCompleted(){
+		this.setState({progressBar: true});
+		this.payment.update({
+			status: 'completed',
+		})
+		 .then(()=>{
+			ToastAndroid.showWithGravity(
+				'Płatność sfinalizowana',
+				ToastAndroid.LONG,
+				ToastAndroid.TOP,
+			);
+			this.setState({progressBar: false});
+		 })		
+		 .catch(()=>{
+			this.setState({progressBar: false});
+		 })
+	}
+
   render() {
+		let progressBar;
+		if(this.state.progressBar) progressBar = (<ProgressBarAndroid styleAttr="Horizontal" color="#2196F3"/>);
     return (
 			<View style={styles.Container} >     
 
-				<Text style={styles.date} >{this.getDateString(this.props.date)}</Text>
+				<Text style={styles.date} >{this.getDateString(this.props.date)}</Text>	
+				{progressBar}			
 				<View style={styles.Payment} >
 					<View style={styles.Header}>
 						<Text style={styles.HeaderText}>{this.props.accountName}</Text>
@@ -54,7 +112,7 @@ export class PaymentItem extends Component {
 					<Text style={styles.Title}>{this.props.title}</Text>
 					<View style={styles.Footer}>
 						<View style={styles.FooterButtons}>
-							<Button success transparent style={styles.Button}>
+							<Button success transparent style={styles.Button} onPress={this.setCompleted} >
 								<Icon name="md-checkmark" style={styles.ChceckMarkIcon} />
 								<Text>Oddane</Text></Button>
 							<Button info transparent style={styles.Button}>
@@ -62,11 +120,11 @@ export class PaymentItem extends Component {
 							</Button>
 						</View>							
 						<Text style={styles.FooterSpace} ></Text>
-						<Button transparent style={styles.ButtonDelete}>
+						<Button transparent style={styles.ButtonDelete} onPress={this.alert} >
 							<Icon name="md-trash" style={styles.ButtonDeleteIcon}></Icon>
 						</Button>						
 					</View>
-				</View>
+				</View>				
 
 			</View>
     )

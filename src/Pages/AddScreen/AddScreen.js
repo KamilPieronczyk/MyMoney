@@ -89,7 +89,7 @@ export class AddScreen extends Component {
         ToastAndroid.showWithGravity(
           'Płatność dodana pomyślnie',
           ToastAndroid.LONG,
-          ToastAndroid.CENTER,
+          ToastAndroid.BOTTOM,
         );
         this.props.navigation.navigate('HomeScreen');
       }).catch((e)=>{
@@ -99,10 +99,12 @@ export class AddScreen extends Component {
   }
 
   render() {
+    let progressBar;
+		if(this.state.progressBar) progressBar = (<ProgressBarAndroid styleAttr="Horizontal" color="#2196F3"/>);
     return (
       <View style={styles.Container}>
         <Header title="Utwórz operację" onBackPress={this.back}/>
-        <ProgressBarAndroid styleAttr="Horizontal" color="#2196F3" animating={this.state.progressBar} />
+        {progressBar}
         <ScrollView style={styles.InsideContainer}>          
           {/* <Text style={styles.Person}>Mama</Text>  */}
           <Item style={styles.InputTitle} error={this.state.titleError}>            
