@@ -12,6 +12,6 @@ export default createStackNavigator(
     },
   },{
     headerMode: 'null',
-    initialRouteName: 'AddScreen',
+    initialRouteName: 'ChooseUserToAddScreen',
   }
 );

@@ -1,44 +1,60 @@
 import React, { Component } from 'react';
-import { StyleSheet, TouchableNativeFeedback } from 'react-native';
+import { StyleSheet, TouchableNativeFeedback, ScrollView, ProgressBarAndroid, ToastAndroid } from 'react-native';
 import { View, Text, Input, Item ,Label, Icon, Button } from 'native-base'; 
 import { Header } from '../../Components/Header';
 import { Colors } from '../../styles/styles';
+import firebase from 'react-native-firebase';
 
 export class AddScreen extends Component {
-  constructor(){
-    super();
+  constructor(props){
+    super(props);
     this.state = {
       CheckedLeft: {},
       CheckedRight: {},
+      transType: 0,
       amount: '',
+      userId: this.props.navigation.getParam('id'),
+      username: this.props.navigation.getParam('username'),
+      title: '',
+      titleError: false,
+      progressBar: false,
     }
     this.checkOption = this.checkOption.bind(this);
     this.setAmount = this.setAmount.bind(this);
     this.backspace = this.backspace.bind(this);
+    this.back = this.back.bind(this);
+    this.createTransaction = this.createTransaction.bind(this);
+
+    let currentUser = firebase.auth().currentUser;
+    this.payments = firebase.firestore().collection('users').doc(currentUser.uid).collection('payments');
+  }
+
+  back(){
+    this.props.navigation.navigate('ChooseUserToAddScreen');
   }
 
   checkOption(index){
     switch (index) {
       case 1:
-        this.setState({CheckedLeft: styles.Checked, CheckedRight: {}});
+        this.setState({CheckedLeft: styles.Checked, CheckedRight: {}, transType: 1});
         break;    
       case 2:
-        this.setState({CheckedLeft: {}, CheckedRight: styles.Checked});
+        this.setState({CheckedLeft: {}, CheckedRight: styles.Checked, transType: 2});
         break;
     }
   }
 
   setAmount = (number) => {
     let string = this.state.amount;
-    if (string.indexOf(',') !== -1 && string.length-string.indexOf(',') > 2) return false;
+    if (string.indexOf('.') !== -1 && string.length-string.indexOf('.') > 2) return false;
     string += number;
     this.setState({amount: string});
   }
 
   addComma = () => {
     let string = this.state.amount;
-    if( string.indexOf(',') !== -1 || string.length == 0) return false;
-    string += ',';
+    if( string.indexOf('.') !== -1 || string.length == 0) return false;
+    string += '.';
     this.setState({amount: string});
   }
 
@@ -48,16 +64,51 @@ export class AddScreen extends Component {
     this.setState({amount: string});
   }
 
+  createTransaction(){
+    if(this.state.title == ''){
+      this.setState({titleError: true});      
+      return false;
+    }
+    if(this.state.transType == 0){
+      return false;
+    }
+    if(parseFloat(this.state.amount) > 0){
+      this.setState({progressBar: true});
+      let kind = this.state.transType == 1 ? 'creditor' : 'debtor';
+      this.payments.doc().set({
+        amount: this.state.amount,
+        accountName: this.state.username,
+        accountId: this.state.userId,
+        kind: kind,
+        date: new Date().getTime(),
+        title: this.state.title,
+        type: 'local',
+        status: 'inProgress',        
+      }).then(()=>{
+        this.setState({progressBar: false});
+        ToastAndroid.showWithGravity(
+          'Płatność dodana pomyślnie',
+          ToastAndroid.LONG,
+          ToastAndroid.CENTER,
+        );
+        this.props.navigation.navigate('HomeScreen');
+      }).catch((e)=>{
+        this.setState({progressBar: false});
+      })
+    }
+  }
+
   render() {
     return (
       <View style={styles.Container}>
-        <Header title="Utwórz operację" />
-
-        <View style={styles.InsideContainer}>
-          {/* <Text style={styles.Person}>Mama</Text> */}
-          <Item style={styles.InputTitle}>            
-            <Input placeholder="Tytuł" />
+        <Header title="Utwórz operację" onBackPress={this.back}/>
+        <ProgressBarAndroid styleAttr="Horizontal" color="#2196F3" animating={this.state.progressBar} />
+        <ScrollView style={styles.InsideContainer}>          
+          {/* <Text style={styles.Person}>Mama</Text>  */}
+          <Item style={styles.InputTitle} error={this.state.titleError}>            
+            <Input placeholder="Tytuł" onChangeText={(title) => this.setState({title})} />
           </Item>
+
           <View style={styles.ActionContainer}>
           
             <TouchableNativeFeedback
@@ -69,7 +120,7 @@ export class AddScreen extends Component {
                     <Icon style={[styles.IconMoney, {color: Colors.green}]} name="md-cash"/>	
                     <Icon style={[styles.IconArrow, {color: Colors.green}]} name="md-arrow-forward"/>	
                   </View>              
-                  <Text style={styles.ActionPerson}>Mama</Text>              
+                  <Text style={styles.ActionPerson}>{this.state.username}</Text>              
                 </View>
             </TouchableNativeFeedback>
 
@@ -82,13 +133,13 @@ export class AddScreen extends Component {
                     <Icon style={[styles.IconMoney, {color: Colors.red}]} name="md-cash"/>	
                     <Icon style={[styles.IconArrow, {color: Colors.red}]} name="md-arrow-back"/>	
                   </View>              
-                  <Text style={styles.ActionPerson}>Mama</Text>              
+                  <Text style={styles.ActionPerson}>{this.state.username}</Text>              
                 </View>
             </TouchableNativeFeedback>
 
           </View>
 
-          <Text style={styles.Amount}>{this.state.amount != '' ? this.state.amount : '00,00'}</Text>
+          <Text style={styles.Amount}>{this.state.amount != '' ? this.state.amount : '00.00'}</Text>
           <View style={styles.Keyboard}>
             <View style={styles.KeyboradRow}>
               <Button transparent style={styles.KeyboardButton} onPress={()=>this.setAmount(1)}><Text style={styles.KeyboardButtonText}>1</Text></Button>
@@ -116,11 +167,11 @@ export class AddScreen extends Component {
             <Button transparent>
               <Text style={styles.ButtonClearText}>WYCZYŚĆ</Text>
             </Button>            
-            <Button transparent>
+            <Button transparent onPress={this.createTransaction}>
               <Text style={styles.ButtonConfirmText}>ZATWIERDŹ</Text>
             </Button>            
           </View>
-        </View>
+        </ScrollView>
           
       </View>
     )

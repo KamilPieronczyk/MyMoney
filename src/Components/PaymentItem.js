@@ -5,18 +5,53 @@ import { Colors } from '../styles/styles';
 import { View, Text, Button, Icon } from 'native-base';
 
 export class PaymentItem extends Component {
+	constructor(props){
+		super(props);
+		this.char = this.props.kind == 'creditor' ? '+' : '-';
+		this.state = {
+			paymentId: this.props.id,
+		}
+	}
+
+	getDateString(date){
+		let now  = new Date().getTime();
+		let time = now - date;
+		time = ~~(time /1000);
+		let values = [
+			60*60*24*365,
+			60*60*24*30,
+			60*60*24*7,
+			60*60*24,
+			60*60,
+			60,
+			1,
+		];
+		let names = ['year','month','week','day','hour','minute','secund'];
+		let string, name;
+
+		for (let i = 0; i < values.length; i++) {
+			const value = values[i];
+			if(time / value >= 1){
+				name = Math.floor(time/value) > 1 ? names[i]+'s' : names[i];
+				string = Math.floor(time/value) + ' ' + name + ' ago';
+				break;
+			}
+		}
+
+		return string;
+	}
   render() {
     return (
 			<View style={styles.Container} >     
 
-				<Text style={styles.date} >2 dni temu</Text>
+				<Text style={styles.date} >{this.getDateString(this.props.date)}</Text>
 				<View style={styles.Payment} >
 					<View style={styles.Header}>
-						<Text style={styles.HeaderText}>Mama</Text>
+						<Text style={styles.HeaderText}>{this.props.accountName}</Text>
 						<Text style={styles.HeaderSpace} ></Text>
-						<Text style={styles.Amount}>-100,25 zł</Text>
+						<Text style={styles.Amount}>{this.char}{this.props.amount} zł</Text>
 					</View>
-					<Text style={styles.Title}>Bilety na autobus</Text>
+					<Text style={styles.Title}>{this.props.title}</Text>
 					<View style={styles.Footer}>
 						<View style={styles.FooterButtons}>
 							<Button success transparent style={styles.Button}>
