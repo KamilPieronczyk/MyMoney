@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
-import { View, Text, Left, Right, List, ListItem, Radio, Button } from 'native-base'; 
+import { View, Text, Body, Right, List, ListItem, Button, Icon } from 'native-base'; 
 import { Header } from '../../Components/Header';
 import { Colors } from '../../styles/colors';
 import firebase from 'react-native-firebase';
@@ -22,7 +22,9 @@ export class ChooseUserToAddScreen extends Component {
   }
 
   setUser = (id, username) => {
-    this.setState({ id: id, username: username});
+    setTimeout(() => {
+      this.props.navigation.navigate('AddScreen',{id: id, username: username});
+    }, 50);
   }
 
   next(){
@@ -40,7 +42,6 @@ export class ChooseUserToAddScreen extends Component {
         accounts.push({...account.data(),id: account.id});
       });
       this.setState({accounts});
-      this.setUser(this.state.accounts[0].id,this.state.accounts[0].username);
     })
   }
 
@@ -52,21 +53,15 @@ export class ChooseUserToAddScreen extends Component {
           
           <List dataArray={this.state.accounts} renderRow={(account) =>
             <ListItem onPress={()=>this.setUser(account.id, account.username)}>
-              <Left>                
-                <Text>{account.username}</Text>                
-              </Left>
+              <Body>
+                <Text>{account.username}</Text>                                   
+              </Body>
               <Right>
-                <Radio selectedColor={Colors.primary} selected={(this.state.id == account.id)? true : false}/>
+                <Icon name="ios-arrow-forward"/>
               </Right>
             </ListItem>
             }>
           </List>     
-          
-          <View style={styles.ButtonContainer}>
-            <Button info transparent onPress={this.next}>              
-              <Text>Dalej</Text>              
-            </Button>
-          </View>
           
       </View>
     )

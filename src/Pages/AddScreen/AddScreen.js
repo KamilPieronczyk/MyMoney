@@ -76,7 +76,7 @@ export class AddScreen extends Component {
       this.setState({progressBar: true});
       let kind = this.state.transType == 1 ? 'creditor' : 'debtor';
       this.payments.doc().set({
-        amount: this.state.amount,
+        amount: parseFloat(this.state.amount),
         accountName: this.state.username,
         accountId: this.state.userId,
         kind: kind,
