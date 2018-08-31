@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { TabNavigator } from 'react-navigation';
 import { StatusBar, StyleSheet } from 'react-native';
-import { HomeScreen, BalanceScreen, UsersScreen, UsersStack} from '../Pages';
+import { HomeScreen, BalanceScreen, UsersStack, PaymentStack} from '../Pages';
 import AddScreenStack from '../AddScreen/AddScreenStack';
 import { Footer, FooterTab, Button, Icon, Text, Root } from 'native-base';
 
 const HomeTabs = TabNavigator(
   {
-    HomeScreen: { screen: HomeScreen },
+    HomeScreen: { screen: PaymentStack },
     BalanceScreen: { screen: BalanceScreen },
     UsersStack: { screen: UsersStack },
     AddScreenStack: { screen: AddScreenStack },

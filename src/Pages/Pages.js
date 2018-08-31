@@ -9,6 +9,7 @@ import { LandingScreen } from './LandingScreen/LandingScreen';
 import { AddUserScreen } from './AddUserScreen/AddUserScreen';
 import { EditUserNameScreen } from './UsersScreen/EditUserName';
 import { DeleteUserScreen } from './UsersScreen/DeleteUserScreen';
+import { PaymentScreen } from './HomeScreen/PaymentScreen';
 
 const UsersStack = createStackNavigator(
     {
@@ -29,6 +30,21 @@ const UsersStack = createStackNavigator(
         initialRouteName: 'UsersScreen',
     }
 );
+
+const PaymentStack = createStackNavigator(
+    {
+        HomeScreen: {
+            screen: HomeScreen,
+        },
+        PaymentScreen: {
+            screen: PaymentScreen,
+            mode: 'modal',
+        }
+    },{
+        headerMode: 'null',
+        initialRouteName: 'HomeScreen',
+    }
+)
  
 export {
     HomeScreen,
@@ -39,5 +55,7 @@ export {
     AddScreenStack,
     LandingScreen,
     AddUserScreen,
-    UsersStack
+    PaymentScreen,
+    UsersStack,
+    PaymentStack,
 };

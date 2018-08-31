@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Alert, ToastAndroid, ProgressBarAndroid } from 'react-native';
+import { StyleSheet, Alert, ToastAndroid, ProgressBarAndroid, TouchableNativeFeedback } from 'react-native';
 import { Colors } from '../styles/styles';
 
 import { View, Text, Button, Icon } from 'native-base';
@@ -103,28 +103,17 @@ export class PaymentItem extends Component {
 
 				<Text style={styles.date} >{this.getDateString(this.props.date)}</Text>	
 				{progressBar}			
-				<View style={styles.Payment} >
-					<View style={styles.Header}>
-						<Text style={styles.HeaderText}>{this.props.accountName}</Text>
-						<Text style={styles.HeaderSpace} ></Text>
-						<Text style={styles.Amount}>{this.char}{this.props.amount} zł</Text>
+				<TouchableNativeFeedback background={TouchableNativeFeedback.SelectableBackground()} onPress={this.props.onPress} >
+					<View style={styles.PaymentContainer} >						
+						<View style={styles.LeftSide}>              
+							<Text style={styles.paymentUsername} >{this.props.accountName}</Text>
+							<Text style={styles.paymentTitle} >{this.props.title}</Text>              
+						</View>
+						<View style={styles.RightSide}>              
+							<Text style={styles.paymentAmount} >{this.props.amount} zł</Text>              
+						</View>
 					</View>
-					<Text style={styles.Title}>{this.props.title}</Text>
-					<View style={styles.Footer}>
-						<View style={styles.FooterButtons}>
-							<Button success transparent style={styles.Button} onPress={this.setCompleted} >
-								<Icon name="md-checkmark" style={styles.ChceckMarkIcon} />
-								<Text>Oddane</Text></Button>
-							<Button info transparent style={styles.Button}>
-								<Text>Przypomnij</Text>
-							</Button>
-						</View>							
-						<Text style={styles.FooterSpace} ></Text>
-						<Button transparent style={styles.ButtonDelete} onPress={this.alert} >
-							<Icon name="md-trash" style={styles.ButtonDeleteIcon}></Icon>
-						</Button>						
-					</View>
-				</View>				
+        </TouchableNativeFeedback>			
 
 			</View>
     )
@@ -140,59 +129,40 @@ const styles = StyleSheet.create({
 		fontSize: 12,
 		color: '#333',
 		marginBottom: 5,
-	},
-	Payment: {
-		backgroundColor: '#fff',
-		borderRadius: 10,
-		elevation: 2,
-		padding: 10,
-	},
-	Header: {
-		display: 'flex',
-		flexDirection: 'row',
-	},
-	HeaderText: {
-		fontSize: 18,
-		color: '#333',
-		flex: 0,
-	},
-	HeaderSpace: {
-		flex: 1,
-	},
-	Amount: {
-		flex: 0,
-		fontSize: 16,
-		color: '#333',
-	},
-	Title: {
-		fontSize: 14,
-	},
-	Footer: {
-		display: 'flex',
-		flexDirection: 'row',
-		paddingTop: 20,
-	},
-	FooterButtons: {
-		flex: 0,
-		display: 'flex',
-		flexDirection: 'row',
-	},
-	FooterSpace: {
-		flex: 1,
-	},
-	ButtonDelete: {
-		flex: 0,
-	},
-	ButtonDeleteIcon: {
-		fontSize: 28,
-		color: Colors.red,
-	},
-	Button: {
-		marginRight: 10,
-	},
-	ChceckMarkIcon: {
-		marginRight: 0,
-	}
+	},	
+  paymentCompleted: {
+    backgroundColor: Colors.green,
+    elevation: 4,
+  },
+  PaymentContainer: {
+    padding: 10,
+    display: 'flex',
+    flexDirection: 'row',
+    elevation: 2,
+    borderRadius: 0,
+    backgroundColor: '#fff',
+  },
+  LeftSide: {
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1,
+  },
+  RightSide: {
+    flex: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+  paymentUsername: {
+    fontSize: 18,
+  },
+  paymentTitle: {
+    fontSize: 14,
+  },
+  paymentAmount: {
+    fontSize: 18,
+    textAlign: 'right',
+  }
 })
 
 export default PaymentItem;

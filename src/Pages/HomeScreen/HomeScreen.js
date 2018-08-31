@@ -19,6 +19,7 @@ export class HomeScreen extends Component {
 
     let currentUser = firebase.auth().currentUser;
     this.payments = firebase.firestore().collection('users').doc(currentUser.uid).collection('payments');
+    this.openPaymentScreen = this.openPaymentScreen.bind(this);
   }
 
   componentWillMount(){
@@ -34,6 +35,10 @@ export class HomeScreen extends Component {
       this.setState({prograssBar: false});
       this.setState({payments});
     })
+  }
+
+  openPaymentScreen(id){
+    this.props.navigation.navigate('PaymentScreen',{paymentId: id});
   }
 
   render() {
@@ -54,32 +59,13 @@ export class HomeScreen extends Component {
               amount={item.amount}
               accountId={item.accountId}
               status={item.status}
+              onPress={()=>{this.openPaymentScreen(item.id)}}
              />
             }
             ListEmptyComponent={              
               <Text style={styles.ListEmptyText} >Aktualnie nie masz żadnych płatności</Text>              
             }>
           </FlatList>
-
-          <View style={styles.PaymentContainer} >
-            <View style={styles.LeftSide}>              
-              <Text style={styles.paymentUsername} >Mama</Text>
-              <Text style={styles.paymentTitle} >Tytuł</Text>              
-            </View>
-            <View style={styles.RightSide}>              
-              <Text style={styles.paymentAmount} >15 zł</Text>              
-            </View>
-          </View>
-
-          <View style={[styles.PaymentContainer,styles.paymentCompleted]} >
-            <View style={styles.LeftSide}>              
-              <Text style={styles.paymentUsername} >Mama</Text>
-              <Text style={styles.paymentTitle} >Tytuł</Text>              
-            </View>
-            <View style={styles.RightSide}>              
-              <Text style={styles.paymentAmount} >15 zł</Text>              
-            </View>
-          </View>
           
         </ScrollView>
       </View>      
@@ -100,39 +86,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 16,
   },
-  paymentCompleted: {
-    backgroundColor: Colors.green,
-    elevation: 4,
-  },
-  PaymentContainer: {
-    padding: 10,
-    display: 'flex',
-    flexDirection: 'row',
-    elevation: 2,
-    borderRadius: 0,
-    backgroundColor: '#fff',
-    marginVertical: 10,
-    marginHorizontal: 10,
-  },
-  LeftSide: {
-    display: 'flex',
-    flexDirection: 'column',
-    flex: 1,
-  },
-  RightSide: {
-    flex: 0,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-  },
-  paymentUsername: {
-    fontSize: 18,
-  },
-  paymentTitle: {
-    fontSize: 14,
-  },
-  paymentAmount: {
-    fontSize: 18,
-    textAlign: 'right',
-  }
 })
