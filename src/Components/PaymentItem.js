@@ -13,6 +13,7 @@ export class PaymentItem extends Component {
 			paymentId: this.props.id,
 			accountId: this.props.accountId,
 			progressBar: false,
+			backgroundColor: '#fff',
 		}
 		let currentUser = firebase.auth().currentUser;
     this.payment = firebase.firestore().collection('users').doc(currentUser.uid).collection('payments').doc(this.state.paymentId);
@@ -47,6 +48,24 @@ export class PaymentItem extends Component {
 			}
 		}
 		return string;
+	}
+
+	componentDidMount(){
+		if(this.props.status == 'completed')
+			this.setState({
+				backgroundColor: '#3bd65f',
+		}) 
+	}
+
+	componentWillReceiveProps(nextProps){
+		if(nextProps.status == 'completed')
+			this.setState({
+				backgroundColor: '#3bd65f',
+			}) 
+		else 
+			this.setState({
+				backgroundColor: '#fff',
+			}) 
 	}
 
 	alert(){
@@ -98,19 +117,22 @@ export class PaymentItem extends Component {
   render() {
 		let progressBar;
 		if(this.state.progressBar) progressBar = (<ProgressBarAndroid styleAttr="Horizontal" color="#2196F3"/>);
+
+		let char;
+    char = this.props.kind == 'creditor' ? '+' : '-';
     return (
 			<View style={styles.Container} >     
 
 				<Text style={styles.date} >{this.getDateString(this.props.date)}</Text>	
 				{progressBar}			
 				<TouchableNativeFeedback background={TouchableNativeFeedback.SelectableBackground()} onPress={this.props.onPress} >
-					<View style={styles.PaymentContainer} >						
+					<View style={[styles.PaymentContainer, {backgroundColor: this.state.backgroundColor}]} >						
 						<View style={styles.LeftSide}>              
 							<Text style={styles.paymentUsername} >{this.props.accountName}</Text>
 							<Text style={styles.paymentTitle} >{this.props.title}</Text>              
 						</View>
 						<View style={styles.RightSide}>              
-							<Text style={styles.paymentAmount} >{this.props.amount} zł</Text>              
+							<Text style={styles.paymentAmount} >{char} {this.props.amount} zł</Text>              
 						</View>
 					</View>
         </TouchableNativeFeedback>			

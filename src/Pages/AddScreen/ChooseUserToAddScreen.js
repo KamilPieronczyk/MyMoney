@@ -28,7 +28,7 @@ export class ChooseUserToAddScreen extends Component {
   }
 
   next(){
-    this.props.navigation.navigate('AddScreen',{id: this.state.id, username: this.state.username});
+    this.props.navigation.push('AddScreen',{id: this.state.id, username: this.state.username});
   }
 
   componentWillMount(){

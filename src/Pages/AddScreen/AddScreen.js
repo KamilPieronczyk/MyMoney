@@ -29,8 +29,8 @@ export class AddScreen extends Component {
     this.payments = firebase.firestore().collection('users').doc(currentUser.uid).collection('payments');
   }
 
-  back(){
-    this.props.navigation.navigate('ChooseUserToAddScreen');
+  back(){    
+    this.props.navigation.pop();
   }
 
   checkOption(index){
@@ -84,6 +84,7 @@ export class AddScreen extends Component {
         title: this.state.title,
         type: 'local',
         status: 'inProgress',        
+        deleted: false,
       }).then(()=>{
         this.setState({progressBar: false});
         ToastAndroid.showWithGravity(
@@ -91,6 +92,7 @@ export class AddScreen extends Component {
           ToastAndroid.LONG,
           ToastAndroid.BOTTOM,
         );
+        this.props.navigation.pop();
         this.props.navigation.navigate('HomeScreen');
       }).catch((e)=>{
         this.setState({progressBar: false});
@@ -159,7 +161,7 @@ export class AddScreen extends Component {
               <Button transparent style={styles.KeyboardButton} onPress={()=>this.setAmount(9)}><Text style={styles.KeyboardButtonText}>9</Text></Button>
             </View>
             <View style={styles.KeyboradRow}>
-              <Button transparent style={styles.KeyboardButton}><Icon name="md-checkmark" style={styles.KeyboardButtonIcon} /></Button>
+            <Button transparent style={styles.KeyboardButton} onPress={()=>this.setAmount(0)}><Text style={styles.KeyboardButtonText}>0</Text></Button>
               <Button transparent style={styles.KeyboardButton} onPress={()=>this.addComma()}><Text style={styles.KeyboardButtonText}>,</Text></Button>
               <Button transparent style={styles.KeyboardButton} onPress={this.backspace}><Icon name="md-backspace" style={styles.KeyboardButtonIcon} /></Button>
             </View>

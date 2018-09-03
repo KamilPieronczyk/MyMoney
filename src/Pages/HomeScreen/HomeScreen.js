@@ -30,15 +30,18 @@ export class HomeScreen extends Component {
     this.payments.orderBy('date','desc').onSnapshot(docs => {
       let payments = [];
       docs.forEach( payment => {
-        payments.push({...payment.data(),id: payment.id,key: payment.id});
+        if(!payment.data().deleted)
+          payments.push({...payment.data(),id: payment.id,key: payment.id});        
       })
       this.setState({prograssBar: false});
       this.setState({payments});
+    }, error => {
+      this.setState({prograssBar: false});
     })
   }
 
-  openPaymentScreen(id){
-    this.props.navigation.navigate('PaymentScreen',{paymentId: id});
+  openPaymentScreen(payment){
+    this.props.navigation.push('PaymentScreen',{...payment});
   }
 
   render() {
@@ -59,7 +62,7 @@ export class HomeScreen extends Component {
               amount={item.amount}
               accountId={item.accountId}
               status={item.status}
-              onPress={()=>{this.openPaymentScreen(item.id)}}
+              onPress={()=>{this.openPaymentScreen(item)}}
              />
             }
             ListEmptyComponent={              
