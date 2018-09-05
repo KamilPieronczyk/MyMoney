@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Alert, BackHandler, ToastAndroid, ScrollView, StatusBar} from 'react-native';
+import { StyleSheet, Alert, ToastAndroid, ScrollView, StatusBar, Modal, } from 'react-native';
 import { View, Text, Button,Icon, List, ListItem} from 'native-base'; 
 import { Colors } from '../../styles/styles';
 import firebase from 'react-native-firebase';
@@ -8,6 +8,7 @@ import { MySpinner }from '../../Components/Spinner';
 export class PaymentScreen extends Component {
   constructor(props){
     super(props);
+    this.backHandler = null;
     let date = new Date(this.props.navigation.getParam('date'));
     let dateString = date.toLocaleDateString();
     let timeString = date.toLocaleTimeString();
@@ -32,18 +33,16 @@ export class PaymentScreen extends Component {
     this.setUncompleted = this.setUncompleted.bind(this);
     this.removePayment = this.removePayment.bind(this);
     this.alertRemove = this.alertRemove.bind(this);
+    this.backPressed = this.backPressed.bind(this);
   }
 
   componentDidMount() {
-    this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-      this.back(); // works best when the goBack is async
-      return true;
-    });
-    if(this.state.status == 'completed') this.setGreenTheme();
+    if(this.state.status == 'completed') this.setState({backgroundColor: '#3bd65f'});
   }
 
-  componentWillUnmount() {
-    this.backHandler.remove();
+  backPressed = () => {
+    this.props.navigation.goBack();
+    return true;
   }
 
   back(){
@@ -54,9 +53,7 @@ export class PaymentScreen extends Component {
   }
 
   setGreenTheme(){
-    this.setState({
-      backgroundColor: '#3bd65f',
-    })
+    this.setState({backgroundColor: '#3bd65f'});
     StatusBar.setBackgroundColor('#3bd65f');
   }
 
@@ -154,6 +151,13 @@ export class PaymentScreen extends Component {
     char = this.state.kind == 'creditor' ? '+' : '-';
 
     return (
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={true}
+        presentationStyle = 'fullScreen'
+        onRequestClose={this.back}
+      >
       <ScrollView style={[styles.Container,{backgroundColor: this.state.backgroundColor}]}>        
 
         <View style={styles.closeSection} >         
@@ -227,6 +231,7 @@ export class PaymentScreen extends Component {
         <MySpinner visible={this.state.progressBar} />        
         
       </ScrollView>
+      </Modal>
     )
   }
 };

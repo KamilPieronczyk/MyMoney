@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Alert } from 'react-native';
+import { StyleSheet, Alert, FlatList } from 'react-native';
 import { View, Text, List, ListItem, Right,Body, Icon, ActionSheet, Fab } from 'native-base'; 
 import { Header } from '../../Components/Header';
 import { Colors } from '../../styles/styles';
@@ -14,23 +14,25 @@ export class UsersScreen extends Component {
       visible: false,
     }
     let currentUser = firebase.auth().currentUser;
-    this.db = firebase.firestore().collection('users').doc(currentUser.uid).collection('accounts');
+    this.accounts = firebase.firestore().collection('users').doc(currentUser.uid).collection('accounts');
+    this.payments = firebase.firestore().collection('users').doc(currentUser.uid).collection('payments');
     this.AddUserOpen = this.AddUserOpen.bind(this);    
     this.getUsers = this.getUsers.bind(this);
     this.saldoClear = this.saldoClear.bind(this);
     this.saldoClearAlert = this.saldoClearAlert.bind(this);
+    this.pushAccount = this.pushAccount.bind(this);
   }
   ShowActionSheet(accountId, username){
     let BUTTONS = [
       { text: "Wyzeruj saldo", icon: "ios-backspace", iconColor: Colors.red },
       { text: "Edytuj nazwę", icon: "md-create", iconColor: Colors.black },
-      { text: "Połącz z kontem Google", icon: "logo-google", iconColor: Colors.primary },
+      // { text: "Połącz z kontem Google", icon: "logo-google", iconColor: Colors.primary },
       { text: "Usuń", icon: "md-trash", iconColor: Colors.red },
       { text: "Zamknij", icon: "close", iconColor: Colors.red }
     ];
     ActionSheet.show({
         options: BUTTONS,
-        cancelButtonIndex: 4,
+        cancelButtonIndex: 3,
       },
       buttonIndex => {
         switch (buttonIndex) {
@@ -40,7 +42,7 @@ export class UsersScreen extends Component {
           case 1:
             this.props.navigation.navigate('EditUserNameScreen',{accountId: accountId, username: username})
             break;
-          case 3:
+          case 2:
             this.props.navigation.navigate('DeleteUserScreen',{accountId: accountId, username: username})
             break;
           default:
@@ -71,7 +73,7 @@ export class UsersScreen extends Component {
 
   saldoClear(accountId){
     this.setState({visible: true});
-    this.db.doc(accountId).update({saldo: 0}).then(()=>{
+    this.accounts.doc(accountId).update({saldo: 0}).then(()=>{
       this.setState({visible: false});
     }).catch(()=>{
       this.setState({visible: false});
@@ -79,13 +81,37 @@ export class UsersScreen extends Component {
   }
   
   getUsers(){
-    this.db.onSnapshot(doc => {
-      let accounts = [];
+    this.accounts.onSnapshot(doc => {
       doc.forEach( account => {
-        accounts.push({...account.data(),id: account.id});
-      });
-      this.setState({accounts});
+        this.payments.where('accountId','==',account.id).where('deleted','==',false).onSnapshot( payments => {
+          let saldo = 0;
+          payments.forEach( payment => {
+            payment = payment.data();
+            if(payment.kind == 'creditor'){
+              saldo += payment.status == 'inProgress' ? payment.amount : 0;
+            } else {
+              saldo += payment.status == 'inProgress' ? -payment.amount : 0;
+            }
+          })
+          this.pushAccount({username: account.data().username,id: account.id, saldo : saldo});
+        })        
+      });      
     })
+  }
+
+  pushAccount(newAccount){
+    let accounts = this.state.accounts;
+    let exists = false;
+    accounts = accounts.map( account => {
+      if(account.hasOwnProperty('id') && account.id == newAccount.id) {
+        exists = true;
+        return newAccount;
+      } else {
+        return account;
+      }
+    })
+    if (!exists) accounts.push(newAccount);
+    this.setState({accounts});
   }
 
   render(){

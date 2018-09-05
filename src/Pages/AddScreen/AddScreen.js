@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, TouchableNativeFeedback, ScrollView, ProgressBarAndroid, ToastAndroid } from 'react-native';
+import { StyleSheet, TouchableNativeFeedback, ScrollView, ProgressBarAndroid, ToastAndroid, DeviceEventEmitter, BackHandler } from 'react-native';
 import { View, Text, Input, Item ,Label, Icon, Button } from 'native-base'; 
 import { Header } from '../../Components/Header';
 import { Colors } from '../../styles/styles';
@@ -31,6 +31,20 @@ export class AddScreen extends Component {
 
   back(){    
     this.props.navigation.pop();
+    return true;
+  }
+
+  componentDidMount() {
+    if(this.state.status == 'completed') this.setGreenTheme();    
+    DeviceEventEmitter.removeAllListeners('hardwareBackPress')
+    DeviceEventEmitter.addListener('hardwareBackPress', this.back);
+  }
+
+  componentWillUnmount() {
+    DeviceEventEmitter.removeAllListeners('hardwareBackPress');
+    DeviceEventEmitter.addListener('hardwareBackPress', ()=>{
+      BackHandler.exitApp();
+    });
   }
 
   checkOption(index){
