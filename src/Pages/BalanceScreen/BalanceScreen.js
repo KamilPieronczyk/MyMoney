@@ -4,7 +4,7 @@ import { StyleSheet, FlatList, Dimensions } from 'react-native';
 import { Header } from '../../Components/Header';
 import firebase from 'react-native-firebase';
 import { MySpinner } from '../../Components/Spinner';
-import { LineChart } from 'react-native-chart-kit';
+import { LineChart, BarChart } from 'react-native-chart-kit';
 
 export class BalanceScreen extends Component {
   constructor(props){
@@ -26,8 +26,9 @@ export class BalanceScreen extends Component {
   getUsers(){
     this.accounts.onSnapshot(doc => {
       doc.forEach( account => {
-        this.payments.where('accountId','==',account.id).where('deleted','==',false).onSnapshot( payments => {
+        this.payments.orderBy('date','desc').where('accountId','==',account.id).where('deleted','==',false).onSnapshot( payments => {
           let paymentsArray = [];
+          let labelsArray = [];
           payments.forEach( payment => {
             payment = payment.data();
             if(payment.kind == 'creditor'){
@@ -35,9 +36,13 @@ export class BalanceScreen extends Component {
             } else {
               paymentsArray.push(-payment.amount);
             }
+            let date = new Date(payment.date)
+            let day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
+            let month = date.getMonth() < 9 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1;
+            labelsArray.push(`${day}.${month}`);
           })
           if(paymentsArray.length > 1)
-            this.pushAccount({username: account.data().username,id: account.id,key: account.id, payments: paymentsArray});
+            this.pushAccount({username: account.data().username,id: account.id,key: account.id, payments: paymentsArray, labels: labelsArray});
         })        
       });      
     })
@@ -64,13 +69,15 @@ export class BalanceScreen extends Component {
       <View style={styles.Container}>
           <Header title="Bilans" />
           <FlatList 
+            style={styles.FlatList}
             data={this.state.accounts}
             renderItem={({item}) => (
 
               <View style={styles.chartBox}>
                 <Text style={styles.username}>{item.username}</Text>
-                <LineChart
+                <BarChart                  
                   data={{
+                    labels: item.labels,
                     datasets: [{
                       data: item.payments
                     }]
@@ -78,10 +85,10 @@ export class BalanceScreen extends Component {
                   width={Dimensions.get('window').width - 20} // from react-native
                   height={220}
                   chartConfig={{
-                    backgroundColor: '#e26a00',
-                    backgroundGradientFrom: '#fb8c00',
-                    backgroundGradientTo: '#ffa726',
-                    color: (opacity = 1) => `rgba(50, 50, 50, ${opacity})`,
+                    backgroundColor: '#ffffff',
+                    backgroundGradientFrom: '#ffffff',
+                    backgroundGradientTo: '#ffffff',
+                    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
                     style: {
                       borderRadius: 16
                     }
@@ -96,11 +103,7 @@ export class BalanceScreen extends Component {
               </View>
 
             )} 
-          />      
-
-          {/* <BalanceUserItem username="Mama" amount="-100,24" details={[-50,-20,-30,80,125,684]}/>
-          <BalanceUserItem username="Mama" amount="-100,24" details={[-50,-20,684]}/>
-          <BalanceUserItem username="Mama" amount="-100,24" details={[-50,-20,-30,80,125,684,-25,-84]}/> */}
+          />     
           
       </View>
     )
@@ -119,6 +122,9 @@ const styles = StyleSheet.create({
   username: {
     textAlign: 'center',
     fontSize: 18,
+  },
+  FlatList: {
+    marginTop: 10,
   }
 })
 

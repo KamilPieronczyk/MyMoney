@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, Alert, ToastAndroid, ProgressBarAndroid, TouchableNativeFeedback } from 'react-native';
 import { Colors } from '../styles/styles';
 
-import { View, Text, Button, Icon } from 'native-base';
+import { View, Text, Button, Icon, ListItem, Right, Body } from 'native-base';
 import firebase from 'react-native-firebase';
 
 export class PaymentItem extends Component {
@@ -122,7 +122,6 @@ export class PaymentItem extends Component {
     char = this.props.kind == 'creditor' ? '+' : '-';
     return (
 			<View style={styles.Container} >     
-
 				<Text style={styles.date} >{this.getDateString(this.props.date)}</Text>	
 				{progressBar}			
 				<TouchableNativeFeedback background={TouchableNativeFeedback.SelectableBackground()} onPress={this.props.onPress} >
@@ -135,8 +134,7 @@ export class PaymentItem extends Component {
 							<Text style={styles.paymentAmount} >{char} {this.props.amount} zł</Text>              
 						</View>
 					</View>
-        </TouchableNativeFeedback>			
-
+				</TouchableNativeFeedback>			
 			</View>
     )
   }
@@ -184,7 +182,11 @@ const styles = StyleSheet.create({
   paymentAmount: {
     fontSize: 18,
     textAlign: 'right',
-  }
+	},
+	listItem: {
+		marginLeft: 0,
+		paddingLeft: 0,
+	}
 })
 
 export default PaymentItem;

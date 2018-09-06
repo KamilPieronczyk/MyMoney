@@ -68,10 +68,8 @@ export class SignInScreen extends Component {
               style={{ width: 225, height: 48, marginBottom: 13 }}
               size={GoogleSigninButton.Size.Wide}
               color={GoogleSigninButton.Color.Light}
-              onPress={this.logWithGoogle}/>
-            <Button light block transparent style={styles.Button} onPress={this.Anonymous}>
-              <Text style={styles.ButtonColor}>WEJDŹ BEZ LOGOWANIA</Text>
-            </Button>
+              onPress={this.logWithGoogle}
+            />
             {load}
           </View>
         </View>   

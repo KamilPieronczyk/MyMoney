@@ -79,8 +79,8 @@ export class HomeScreen extends Component {
 const styles = StyleSheet.create({
   Container: {
     backgroundColor: '#fff',
+    paddingHorizontal: 10,
     display: 'flex',
-    paddingHorizontal: 14,
     paddingTop: 5,
     height: '100%',
   },
