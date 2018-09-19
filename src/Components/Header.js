@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
 import { Colors } from '../styles/styles';
 import { View, Text, Button, Icon, ActionSheet } from 'native-base';
+import { GoogleSignin } from 'react-native-google-signin';
 import firebase from 'react-native-firebase';
 
 export class Header extends Component {
@@ -25,6 +26,7 @@ export class Header extends Component {
 				switch(buttonIndex){
 					case 0: 
 						firebase.auth().signOut();
+						GoogleSignin.signOut();
 						break;
 				}
 			},    

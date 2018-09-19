@@ -26,7 +26,7 @@ export class BalanceScreen extends Component {
   getUsers(){
     this.accounts.onSnapshot(doc => {
       doc.forEach( account => {
-        this.payments.orderBy('date','desc').where('accountId','==',account.id).where('deleted','==',false).onSnapshot( payments => {
+        this.payments.where('accountId','==',account.id).where('deleted','==',false).orderBy('date','asc').onSnapshot( payments => {
           let paymentsArray = [];
           let labelsArray = [];
           payments.forEach( payment => {

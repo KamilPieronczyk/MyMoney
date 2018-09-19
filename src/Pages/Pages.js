@@ -10,6 +10,8 @@ import { AddUserScreen } from './AddUserScreen/AddUserScreen';
 import { EditUserNameScreen } from './UsersScreen/EditUserName';
 import { DeleteUserScreen } from './UsersScreen/DeleteUserScreen';
 import { PaymentScreen } from './HomeScreen/PaymentScreen';
+import { RemotePaymentScreen } from './HomeScreen/RemotePaymentScreen';
+import { PinScreen } from './PinScreen/PinScreen';
 
 const UsersStack = createStackNavigator(
     {
@@ -39,6 +41,10 @@ const PaymentStack = createStackNavigator(
         PaymentScreen: {
             screen: PaymentScreen,
             mode: 'modal',
+        },
+        RemotePaymentScreen: {
+            screen: RemotePaymentScreen,
+            mode: 'modal',            
         }
     },{
         headerMode: 'null',
@@ -58,4 +64,5 @@ export {
     PaymentScreen,
     UsersStack,
     PaymentStack,
+    PinScreen
 };

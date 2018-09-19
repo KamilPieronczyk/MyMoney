@@ -15,6 +15,7 @@ export class AddScreen extends Component {
       amount: '',
       userId: this.props.navigation.getParam('id'),
       username: this.props.navigation.getParam('username'),
+      accountType: this.props.navigation.getParam('type'),
       title: '',
       titleError: false,
       progressBar: false,
@@ -24,6 +25,8 @@ export class AddScreen extends Component {
     this.backspace = this.backspace.bind(this);
     this.back = this.back.bind(this);
     this.createTransaction = this.createTransaction.bind(this);
+    this.createLocalTransaction = this.createLocalTransaction.bind(this);
+    this.createRemoteTransaction = this.createRemoteTransaction.bind(this);
 
     let currentUser = firebase.auth().currentUser;
     this.payments = firebase.firestore().collection('users').doc(currentUser.uid).collection('payments');
@@ -87,31 +90,73 @@ export class AddScreen extends Component {
       return false;
     }
     if(parseFloat(this.state.amount) > 0){
-      this.setState({progressBar: true});
+      if(this.state.accountType == 'local')
+        this.createLocalTransaction();
+      else 
+        this.createRemoteTransaction();      
+    }
+  }
+
+  createLocalTransaction(){
+    this.setState({progressBar: true});
+    let kind = this.state.transType == 1 ? 'creditor' : 'debtor';
+    this.payments.doc().set({
+      amount: parseFloat(this.state.amount),
+      accountName: this.state.username,
+      accountId: this.state.userId,
+      kind: kind,
+      date: new Date().getTime(),
+      title: this.state.title,
+      type: 'local',
+      status: 'inProgress',        
+      deleted: false,
+    }).then(()=>{
+      this.setState({progressBar: false});
+      ToastAndroid.showWithGravity(
+        'Płatność dodana pomyślnie',
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+      );
+      this.props.navigation.pop();
+      this.props.navigation.navigate('HomeScreen');
+    }).catch((e)=>{
+      this.setState({progressBar: false});
+    })
+  }
+
+  createRemoteTransaction(){
+    this.setState({progressBar: true});
+    const accountRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).collection('accounts').doc(this.state.userId);
+    accountRef.get().then( doc => {
+      const paymentsRoomId = doc.get('paymentsRoom');
       let kind = this.state.transType == 1 ? 'creditor' : 'debtor';
-      this.payments.doc().set({
-        amount: parseFloat(this.state.amount),
-        accountName: this.state.username,
-        accountId: this.state.userId,
+      return firebase.firestore().collection('paymentsRooms').doc(paymentsRoomId).collection('payments').add({
+        amount: parseFloat(this.state.amount),     
         kind: kind,
         date: new Date().getTime(),
         title: this.state.title,
-        type: 'local',
+        type: 'remote',
         status: 'inProgress',        
         deleted: false,
-      }).then(()=>{
-        this.setState({progressBar: false});
-        ToastAndroid.showWithGravity(
-          'Płatność dodana pomyślnie',
-          ToastAndroid.LONG,
-          ToastAndroid.BOTTOM,
-        );
-        this.props.navigation.pop();
-        this.props.navigation.navigate('HomeScreen');
-      }).catch((e)=>{
-        this.setState({progressBar: false});
+        confirmed: false,
+        receiver: this.state.userId,
+        created_by: {
+          uid: firebase.auth().currentUser.uid,
+          name: firebase.auth().currentUser.displayName,
+        }
       })
-    }
+    }).then(()=>{
+      this.setState({progressBar: false});
+      ToastAndroid.showWithGravity(
+        'Płatność dodana pomyślnie',
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+      );
+      this.props.navigation.pop();
+      this.props.navigation.navigate('HomeScreen');
+    }).catch((e)=>{
+      this.setState({progressBar: false});
+    })
   }
 
   render() {

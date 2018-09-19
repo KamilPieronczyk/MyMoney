@@ -8,7 +8,8 @@ import firebase from 'firebase';
     databaseURL: "https://mymoney-340aa.firebaseio.com",
     projectId: "mymoney-340aa",
     storageBucket: "mymoney-340aa.appspot.com",
-    messagingSenderId: "105934374982"
+    messagingSenderId: "105934374982",
+    timestampsInSnapshots: true,
   };
   firebase.initializeApp(config);
 

@@ -21,9 +21,9 @@ export class ChooseUserToAddScreen extends Component {
     this.db = firebase.firestore().collection('users').doc(currentUser.uid).collection('accounts');
   }
 
-  setUser = (id, username) => {
+  setUser = (id, username, type) => {
     setTimeout(() => {
-      this.props.navigation.navigate('AddScreen',{id: id, username: username});
+      this.props.navigation.navigate('AddScreen',{id, username, type});
     }, 50);
   }
 
@@ -52,7 +52,7 @@ export class ChooseUserToAddScreen extends Component {
           <Header title="Wybierz użytkownika" />      
           
           <List dataArray={this.state.accounts} renderRow={(account) =>
-            <ListItem onPress={()=>this.setUser(account.id, account.username)}>
+            <ListItem onPress={()=>this.setUser(account.id, account.username, account.type)}>
               <Body>
                 <Text>{account.username}</Text>                                   
               </Body>

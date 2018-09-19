@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Alert } from 'react-native';
+import { StyleSheet, Alert, ToastAndroid } from 'react-native';
 import { View, Text, Item, Input, Button} from 'native-base'; 
 import { Header } from '../../Components/Header';
 import { Colors } from '../../styles/styles';
@@ -11,7 +11,7 @@ export class AddUserScreen extends Component {
     super(props);
     this.state = {
       username: '',
-      email: '',
+      pin: '',
       spinner: false,
     }
     this.db = firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).collection('accounts');
@@ -34,7 +34,7 @@ export class AddUserScreen extends Component {
   }
 
   createAccount(){
-    if(this.state.username != ''){
+    if(this.state.username != '' && this.state.pin == ''){
       this.setState({spinner: true});
       this.db.where('username','==',this.state.username).get()
       .then((docs)=>{
@@ -44,8 +44,7 @@ export class AddUserScreen extends Component {
         } else {
           this.db.doc().set({
             username: this.state.username,
-            email: this.state.email,
-            saldo: 0,
+            type: 'local',
           })
           .then(()=>{
             this.setState({spinner: false});
@@ -54,9 +53,34 @@ export class AddUserScreen extends Component {
         }
       })
       .catch();
+    } 
+    if(this.state.pin != '' && this.state.username != ''){
+      this.setState({spinner: true});
+      this.db.where('username','==',this.state.username).get()
+      .then((docs)=>{
+        if(!docs.empty){
+          this.alertUsername();
+          this.setState({spinner: false});
+        } else {
+          const combineAccounts = firebase.functions().httpsCallable('combineAccounts');
+          combineAccounts({pin: this.state.pin, username: this.state.username}).then( ({data}) => {            
+            this.setState({spinner: false});
+            if(data.status == 'ok'){
+              ToastAndroid.showWithGravity('Konto dodano pomyślnie',ToastAndroid.LONG,ToastAndroid.BOTTOM);
+              this.back();              
+            } else {
+              ToastAndroid.showWithGravity(data.errorMessage,ToastAndroid.LONG,ToastAndroid.BOTTOM);
+            }            
+          }).catch(e => {
+            this.setState({spinner: false});
+            console.warn(e);
+          })  
+        }
+      })
+      .catch();          
     }
-
   }
+
   render(){
     return (
       <View style={styles.Container}>
@@ -67,9 +91,9 @@ export class AddUserScreen extends Component {
           <Item style={styles.InputTitle}>            
             <Input placeholder="Nazwa konta" onChangeText={(username) => this.setState({username})} />
           </Item>
-          <Text style={styles.TextGmail}>Podaj email (Google) tworzonego konta by użytkownik widział twoje operacje (opcjonalne)</Text>
+          <Text style={styles.TextGmail}>Podaj PIN do tworzonego konta by użytkownik widział twoje operacje (musisz go dostać od niego)</Text>
           <Item style={styles.InputGmail}>            
-            <Input placeholder="Email" onChangeText={(email) => this.setState({email})}/>
+            <Input placeholder="PIN" keyboardType="numeric" onChangeText={(pin) => this.setState({pin})}/>
           </Item>
           <View style={styles.ButtonContainer}>
             

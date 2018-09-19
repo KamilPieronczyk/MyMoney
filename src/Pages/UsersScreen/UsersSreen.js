@@ -16,6 +16,7 @@ export class UsersScreen extends Component {
     let currentUser = firebase.auth().currentUser;
     this.accounts = firebase.firestore().collection('users').doc(currentUser.uid).collection('accounts');
     this.payments = firebase.firestore().collection('users').doc(currentUser.uid).collection('payments');
+    this.remotePayments = firebase.firestore().collection('paymentsRooms');
     this.AddUserOpen = this.AddUserOpen.bind(this);    
     this.getUsers = this.getUsers.bind(this);
     this.saldoClear = this.saldoClear.bind(this);
@@ -94,7 +95,30 @@ export class UsersScreen extends Component {
             }
           })
           this.pushAccount({username: account.data().username,id: account.id, saldo : saldo});
-        })        
+        })  
+        if(account.get('type') == 'remote'){
+          this.remotePayments.doc(account.get('paymentsRoom')).collection('payments').onSnapshot( payments => {
+            let saldo = 0;
+            payments.forEach( payment => {
+              payment = payment.data();
+              if(payment.kind == 'creditor'){
+                if(payment.created_by.uid == firebase.auth().currentUser.uid){
+                  saldo += payment.status == 'inProgress' ? payment.amount : 0;
+                } else {
+                  saldo += payment.status == 'inProgress' ? -payment.amount : 0;
+                }
+              } else {
+                if(payment.created_by.uid == firebase.auth().currentUser.uid){
+                  saldo += payment.status == 'inProgress' ? -payment.amount : 0;
+                } else {
+                  saldo += payment.status == 'inProgress' ? +payment.amount : 0;
+                }
+              }
+            })
+            saldo = saldo.toPrecision(2);
+            this.pushAccount({username: account.data().username,id: account.id, saldo : saldo});
+          })
+        }      
       });      
     })
   }

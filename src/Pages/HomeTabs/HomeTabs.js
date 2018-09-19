@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
 import { TabNavigator } from 'react-navigation';
 import { StatusBar, StyleSheet } from 'react-native';
-import { HomeScreen, BalanceScreen, UsersStack, PaymentStack} from '../Pages';
+import { BalanceScreen, UsersStack, PaymentStack, PinScreen} from '../Pages';
 import AddScreenStack from '../AddScreen/AddScreenStack';
 import { Footer, FooterTab, Button, Icon, Text, Root } from 'native-base';
 
 const HomeTabs = TabNavigator(
   {
     HomeScreen: { screen: PaymentStack },
-    BalanceScreen: { screen: BalanceScreen },
+    //BalanceScreen: { screen: BalanceScreen },
     UsersStack: { screen: UsersStack },
     AddScreenStack: { screen: AddScreenStack },
+    PinScreen: { screen: PinScreen },
   },
   {
     tabBarPosition: "bottom",
@@ -30,17 +31,17 @@ const HomeTabs = TabNavigator(
                 <Icon name="ios-cash" style={styles.disactive} />   
               }
             </Button>
-            <Button
+            {/* <Button
               onPress={() => props.navigation.navigate("BalanceScreen")}>
               {props.navigationState.index === 1 ? 
                 <Icon name="md-filing"style={styles.active} /> 
               :
                 <Icon name="md-filing" style={styles.disactive} />   
               }
-            </Button>
+            </Button> */}
             <Button
               onPress={() => props.navigation.navigate("UsersStack")}>
-              {props.navigationState.index === 2 ? 
+              {props.navigationState.index === 1 ? 
                 <Icon name="md-people" style={styles.active}/> 
               :
                 <Icon name="md-people" style={styles.disactive} />   
@@ -48,10 +49,18 @@ const HomeTabs = TabNavigator(
             </Button>
             <Button
               onPress={() => props.navigation.navigate("AddScreenStack")}>
-              {props.navigationState.index === 3 ? 
+              {props.navigationState.index === 2 ? 
                 <Icon name="logo-usd" style={styles.active}/> 
               :
                 <Icon name="logo-usd" style={styles.disactive} />   
+              }
+            </Button>
+            <Button
+              onPress={() => props.navigation.navigate("PinScreen")}>
+              {props.navigationState.index === 3 ? 
+                <Icon name="md-share" style={styles.active}/> 
+              :
+                <Icon name="md-share" style={styles.disactive} />   
               }
             </Button>
           </FooterTab>
