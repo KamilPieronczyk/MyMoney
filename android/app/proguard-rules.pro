@@ -54,6 +54,9 @@
 # See libs/proxy/src/main/java/com/facebook/fbui/textlayoutbuilder/proxy for details.
 -dontwarn android.text.StaticLayout
 
+-keep class io.invertase.firebase.** { *; }
+-dontwarn io.invertase.firebase.**
+
 # okhttp
 
 -keepattributes Signature
@@ -69,5 +72,3 @@
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
 -dontwarn okio.**
 
--keep class io.invertase.firebase.** { *; }
--dontwarn io.invertase.firebase.**

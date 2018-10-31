@@ -5,6 +5,7 @@ import { PaymentItem } from '../../Components/PaymentItem';
 import { StyleSheet } from 'react-native';
 import { Header } from './../../Components/Header';
 import { MySpinner } from './../../Components/Spinner';
+import { WalletCard } from '../../Components/WalletCard';
 import { Colors } from '../../styles/styles';
 import firebase from 'react-native-firebase';
 

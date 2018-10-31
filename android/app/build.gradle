@@ -91,7 +91,7 @@ def enableSeparateBuildPerCPUArchitecture = false
 /**
  * Run Proguard to shrink the Java bytecode in release builds.
  */
-def enableProguardInReleaseBuilds = true
+def enableProguardInReleaseBuilds = false
 
 android {
     compileSdkVersion 27
@@ -158,10 +158,10 @@ dependencies {
     implementation "com.android.support:appcompat-v7:23.0.1"
 
     implementation "com.google.android.gms:play-services-base:15.0.1"
-    implementation "com.google.firebase:firebase-core:16.0.1"
-    implementation "com.google.firebase:firebase-auth:16.0.2"
-    implementation "com.google.firebase:firebase-firestore:17.0.2"
-    implementation "com.google.firebase:firebase-functions:16.0.1"
+    implementation "com.google.firebase:firebase-core:16.0.3"
+    implementation "com.google.firebase:firebase-auth:16.0.3"
+    implementation "com.google.firebase:firebase-firestore:17.1.0"
+    implementation "com.google.firebase:firebase-functions:16.1.0"
     
     implementation "com.facebook.react:react-native:+"  // From node_modules
 }
@@ -174,3 +174,6 @@ task copyDownloadableDepsToLibs(type: Copy) {
 }
 
 apply plugin: 'com.google.gms.google-services'
+
+com.google.gms.googleservices.GoogleServicesPlugin.config.disableVersionCheck = true
+

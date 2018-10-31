@@ -5,6 +5,7 @@ import { Header } from '../../Components/Header';
 import { Colors } from '../../styles/styles';
 import firebase from 'react-native-firebase';
 import { MySpinner } from '../../Components/Spinner';
+import { WalletCard } from '../../Components/WalletCard';
 
 export class UsersScreen extends Component {
   constructor(props){
@@ -146,15 +147,21 @@ export class UsersScreen extends Component {
 
         
         <List dataArray={this.state.accounts} renderRow={(account) =>
-          <ListItem onPress={()=>{this.ShowActionSheet(account.id, account.username)}}>
-            <Body>
-              <Text>{account.username}</Text>              
-              <Text note>{account.saldo} zł</Text>                            
-            </Body>
-            <Right>
-              <Icon name="ios-arrow-forward"/>
-            </Right>
-          </ListItem>
+        
+          <WalletCard 
+            username={account.username}
+            saldo={account.saldo}
+            onPress={()=>{this.ShowActionSheet(account.id, account.username)}}
+          />
+          // <ListItem onPress={()=>{this.ShowActionSheet(account.id, account.username)}}>
+          //   <Body>
+          //     <Text>{account.username}</Text>              
+          //     <Text note>{account.saldo} zł</Text>                            
+          //   </Body>
+          //   <Right>
+          //     <Icon name="ios-arrow-forward"/>
+          //   </Right>
+          // </ListItem>
           }>
         </List>
         
