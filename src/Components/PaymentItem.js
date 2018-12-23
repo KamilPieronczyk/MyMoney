@@ -13,7 +13,7 @@ export class PaymentItem extends Component {
 			paymentId: this.props.id,
 			accountId: this.props.accountId,
 			progressBar: false,
-			backgroundColor: '#fff',
+			backgroundColor: '#F44336',
 		}
 		let currentUser = firebase.auth().currentUser;
     this.payment = firebase.firestore().collection('users').doc(currentUser.uid).collection('payments').doc(this.state.paymentId);
@@ -53,18 +53,18 @@ export class PaymentItem extends Component {
 	componentDidMount(){
 		if(this.props.status == 'completed')
 			this.setState({
-				backgroundColor: '#3bd65f',
+				backgroundColor: '#5ED1DA',
 		}) 
 	}
 
 	componentWillReceiveProps(nextProps){
 		if(nextProps.status == 'completed')
 			this.setState({
-				backgroundColor: '#3bd65f',
+				backgroundColor: '#5ED1DA',
 			}) 
 		else 
 			this.setState({
-				backgroundColor: '#fff',
+				backgroundColor: '#F44336',
 			}) 
 	}
 
@@ -121,71 +121,88 @@ export class PaymentItem extends Component {
 		let char;
     char = this.props.kind == 'creditor' ? '+' : '-';
     return (
-			<View style={styles.Container} >     
-				<Text style={styles.date} >{this.getDateString(this.props.date)}</Text>	
-				{progressBar}			
-				<TouchableNativeFeedback background={TouchableNativeFeedback.SelectableBackground()} onPress={this.props.onPress} >
-					<View style={[styles.PaymentContainer, {backgroundColor: this.state.backgroundColor}]} >						
-						<View style={styles.LeftSide}>              
-							<Text style={styles.paymentUsername} >{this.props.accountName}</Text>
-							<Text style={styles.paymentTitle} >{this.props.title}</Text>              
-						</View>
-						<View style={styles.RightSide}>              
-							<Text style={styles.paymentAmount} >{char} {this.props.amount} zł</Text>              
-						</View>
-					</View>
-				</TouchableNativeFeedback>			
+			<TouchableNativeFeedback background={TouchableNativeFeedback.SelectableBackground()} onPress={this.props.onPress} >
+			<View style={styles.Container}> 
+				<View style={styles.Avatar} >						              
+          <Text style={styles.AvatarText}>{this.props.accountName[0]}</Text>              
+        </View>
+				<View style={styles.Left}>
+				 	<Text style={styles.paymentTitle} >{this.props.title}</Text>              
+  				<Text style={styles.paymentAmount} >{char} {this.props.amount} zł</Text>             
+				</View>
+				<View style={styles.Right}>
+					<Text style={styles.date} >{this.getDateString(this.props.date)}</Text>	
+					<Text style={[styles.status, {backgroundColor: this.state.backgroundColor}]}>Purchase</Text>
+				</View>
 			</View>
+			</TouchableNativeFeedback>
     )
   }
 };
 
 const styles = StyleSheet.create({
 	Container: {
+		padding: 10,		
 		marginBottom: 20,
-		marginHorizontal: 2,
+		display: 'flex',
+		flexDirection: 'row',
 	},
-	date: {
-		fontSize: 12,
-		color: '#333',
-		marginBottom: 5,
-	},	
-  paymentCompleted: {
-    backgroundColor: Colors.green,
-    elevation: 4,
-  },
-  PaymentContainer: {
-    padding: 10,
+  Avatar: {
+		flex: 0,
+    height: 64,
+    width: 64,
+    borderRadius: 32,
+    backgroundColor: '#FFF',
     display: 'flex',
     flexDirection: 'row',
-    elevation: 2,
-    borderRadius: 0,
-    backgroundColor: '#fff',
-  },
-  LeftSide: {
-    display: 'flex',
-    flexDirection: 'column',
-    flex: 1,
-  },
-  RightSide: {
-    flex: 0,
-    display: 'flex',
-    flexDirection: 'column',
     justifyContent: 'center',
+    alignItems: 'center',
   },
-  paymentUsername: {
-    fontSize: 18,
-  },
+  AvatarText: {
+    fontSize: 32,
+    margin: 0,
+    padding: 0,
+    color: '#333',
+	},
+	Left: {
+		paddingLeft: 10,
+		flex: 1,
+		display: 'flex',
+		flexDirection: 'column',		
+	},
   paymentTitle: {
-    fontSize: 14,
+		marginTop: 0,
+		fontSize: 14,
+		color: '#666',
+		fontWeight: '300',
   },
   paymentAmount: {
+		color: '#333',
+		fontWeight: '400',
     fontSize: 18,
-    textAlign: 'right',
+		textAlign: 'left',
+		marginTop: 5,
 	},
-	listItem: {
-		marginLeft: 0,
-		paddingLeft: 0,
+	Right: {
+		flex: 0,
+		display: 'flex',
+		flexDirection: 'column',
+		alignItems: 'flex-end',		
+	},
+	date: {
+		fontSize: 14,
+		color: '#666',
+		textAlign: 'right',
+		marginBottom: 10
+	},
+	status: {
+		backgroundColor: Colors.red,
+		color: '#fff',
+		fontSize: 14,
+		textAlign: 'right',
+		borderRadius: 14,
+		paddingHorizontal: 20,
+		paddingVertical: 5,
 	}
 })
 

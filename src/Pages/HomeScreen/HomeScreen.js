@@ -7,6 +7,7 @@ import { Header } from './../../Components/Header';
 import { MySpinner } from './../../Components/Spinner';
 import { WalletCard } from '../../Components/WalletCard';
 import { Colors } from '../../styles/styles';
+import { BalanceComponent } from '../../Components/BalanceComponent';
 import firebase from 'react-native-firebase';
 
 export class HomeScreen extends Component {  
@@ -171,20 +172,21 @@ export class HomeScreen extends Component {
 
   render() {
     return (
-      <View style={{height: '100%'}}> 
+      <View style={{height: '100%', backgroundColor: '#F3F3F7'}}> 
         <Header title="Płatności" />
+        <BalanceComponent amount="2,132" />
         <Tabs tabBarUnderlineStyle={{backgroundColor:'#333'}}>
           <Tab 
            style={{elevation: 0}}
-           tabStyle={{backgroundColor: '#fff'}} 
-           activeTabStyle={{backgroundColor: '#fff'}}
+           tabStyle={{backgroundColor: '#F3F3F7'}} 
+           activeTabStyle={{backgroundColor: '#F3F3F7'}}
            activeTextStyle={{color: '#333'}}
            heading="Lokalne">
             {this._renderLocalPayments()}
           </Tab>
           <Tab 
-           tabStyle={{backgroundColor: '#fff'}} 
-           activeTabStyle={{backgroundColor: '#fff'}}
+           tabStyle={{backgroundColor: '#F3F3F7'}} 
+           activeTabStyle={{backgroundColor: '#F3F3F7'}}
            activeTextStyle={{color: '#333'}}
            heading="Współdzielone">
             {this._renderRemotePayments()}
@@ -197,7 +199,7 @@ export class HomeScreen extends Component {
 
 const styles = StyleSheet.create({
   Container: {
-    backgroundColor: '#fff',
+    backgroundColor: '#F3F3F7',
     paddingHorizontal: 10,
     display: 'flex',
     paddingTop: 5,
