@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, FlatList } from 'react-native';
+import { ScrollView, FlatList, TouchableNativeFeedback, Dimensions } from 'react-native';
 import { View, Text, List, Tabs, Tab, TabHeading, Icon } from 'native-base'; 
 import { PaymentItem } from '../../Components/PaymentItem';
 import { StyleSheet } from 'react-native';
@@ -112,6 +112,18 @@ export class HomeScreen extends Component {
     this.props.navigation.push('RemotePaymentScreen',{...payment});
   }
 
+  FixedButton = () => {
+    return (
+      <View style={styles.fixedButtonContainer}>
+      <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('#5ED1DA',false)} >
+        <View style={styles.fixedButton}>
+            <Icon name="ios-add" style={styles.fixedButtonIcon} />
+        </View>
+      </TouchableNativeFeedback>  
+      </View>
+    )
+  }
+
   _renderLocalPayments(){
     return(
       <ScrollView style={styles.Container} >          
@@ -192,6 +204,7 @@ export class HomeScreen extends Component {
             {this._renderRemotePayments()}
           </Tab>
         </Tabs>
+        <this.FixedButton />
       </View>      
     )
   }
@@ -210,4 +223,30 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 16,
   },
+  fixedButtonContainer: {
+    position: 'absolute',
+    elevation: 1,
+    zIndex: 999,
+    bottom: 20,
+    left: (Dimensions.get('screen').width/2)-30,
+    backgroundColor: '#fff',
+    height: 60,
+    width: 60,
+    borderRadius: 30,
+    overflow: 'hidden',
+  },
+  fixedButton: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 60,
+    width: 60,
+    borderRadius: 30,
+  },
+  fixedButtonIcon: {
+    color: '#5ED1DA',
+    fontSize: 55,
+    margin: 0,
+    padding: 0,
+  }
 })
